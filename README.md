@@ -1,5 +1,5 @@
 # 96-Well Plate Map Generator
-Python script for generating annotated 96-well plate maps containing text with options to specific text color and well fill from a CSV file.
+Python script for generating annotated 96-well plate maps containing text with options to specify text color and well fill from a CSV file.
 
 ## Quick Start
 Download this repository and install the required packages:
