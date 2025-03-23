@@ -1,0 +1,6 @@
+well,label,fill,label_color
+A1,"Default",,
+B1,"This is really long",,
+C1,"Filled",cyan,
+D1,"Red Text",,red
+E1,"This is\nmultiline",,
