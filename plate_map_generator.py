@@ -117,7 +117,18 @@ def draw_template_platemap(draw:ImageDraw.ImageDraw) -> None:
 def draw_annotations(draw:ImageDraw.ImageDraw, annots:dict) -> None:
     for annot in annots:
         coords = get_well_coords(annot['well'])
-        fill_color = webcolors.name_to_rgb(annot['fill']) if annot['fill'] else (255,255,255)
+        
+        try:
+            # Try name to RGB conversion
+            fill_color = webcolors.name_to_rgb(annot['fill'])
+        except ValueError:
+            try:
+                # Then hex to RGB ...
+                fill_color = webcolors.hex_to_rgb(annot['fill'])
+            except ValueError:
+                # Default to white if unspecified or problematic
+                fill_color = (255,255,255)
+    
         draw.circle(coords, 
                     WELL_DIAMETER/2, 
                     fill=fill_color,
@@ -130,13 +141,23 @@ def draw_annotations(draw:ImageDraw.ImageDraw, annots:dict) -> None:
         annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
 
         red_annot_font_size = ANNOT_FONT_SIZE
-        while annot_width > WELL_DIAMETER:
-            red_annot_font_size = red_annot_font_size * 0.7
+        while annot_width*1.1 > WELL_DIAMETER:
+            red_annot_font_size = red_annot_font_size * 0.9
             annot_font = ImageFont.truetype("arial.ttf", red_annot_font_size) 
             annot_width = draw.textbbox((0,0), label, align='center', font=annot_font)[2]
             annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
 
-        label_color = webcolors.name_to_rgb(annot['label_color']) if annot['label_color'] else (0,0,0)
+        try:
+            # Try name to RGB conversion
+            label_color = webcolors.name_to_rgb(annot['label_color'])
+        except ValueError:
+            try:
+                # Then hex to RGB ...
+                label_color = webcolors.hex_to_rgb(annot['label_color'])
+            except ValueError:
+                # Default to black if unspecified or problematic
+                label_color = (0,0,0)
+
         draw.text((coords[0] - annot_width/2,
                 coords[1] - annot_height/2),
                 text=label,
