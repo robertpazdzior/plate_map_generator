@@ -144,8 +144,8 @@ def draw_annotations(draw:ImageDraw.ImageDraw, annots:dict) -> None:
         annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
 
         red_annot_font_size = ANNOT_FONT_SIZE
-        while annot_width > WELL_DIAMETER:
-            red_annot_font_size = red_annot_font_size * 0.7
+        while annot_width > WELL_DIAMETER * 0.9:
+            red_annot_font_size = red_annot_font_size * 0.9
             annot_font = ImageFont.truetype(FONT_NAME, red_annot_font_size) 
             annot_width = draw.textbbox((0,0), label, align='center', font=annot_font)[2]
             annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
