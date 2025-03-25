@@ -3,6 +3,7 @@ from csv import DictReader
 from datetime import datetime
 
 from PIL import Image, ImageDraw, ImageFont
+import sys
 import webcolors
 
 arg_parser = argparse.ArgumentParser(
@@ -55,7 +56,9 @@ Y_START = IMG_SIZE[1]/2 - ( (NUM_ROWS * (WELL_DIAMETER+WELL_PADDING))/2) + 0.5 *
 ROW_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 COL_LABELS = [str(i) for i in range(1, NUM_COLS + 1)]
 
-# Font sizes
+# Font configuration
+FONT_NAME = 'arial.ttf' if sys.platform == 'win32' else 'Arial.ttf'
+
 ROW_COL_FONT_SIZE = 0.3 * DPI * RES_FACTOR  # Row/col labels
 ANNOT_FONT_SIZE = 0.15 * DPI * RES_FACTOR   # Well annotations
 TITLE_FONT_SIZE = 0.4 * DPI * RES_FACTOR    # Title and subtitles
@@ -79,7 +82,7 @@ def get_well_coords(well: str) -> tuple:
 def draw_template_platemap(draw:ImageDraw.ImageDraw) -> None:
     '''Draws the base well map: well outlines and col/row labels.'''
     try:
-        font = ImageFont.truetype("arial.ttf", ROW_COL_FONT_SIZE)  # Larger font for high-res image
+        font = ImageFont.truetype(FONT_NAME, ROW_COL_FONT_SIZE)  # Larger font for high-res image
     except IOError:
         font = ImageFont.load_default()
 
@@ -136,14 +139,14 @@ def draw_annotations(draw:ImageDraw.ImageDraw, annots:dict) -> None:
                     width=OUTLINE_WIDTH)
 
         label = annot['label'].replace('\\n', '\n')
-        annot_font = ImageFont.truetype("arial.ttf", ANNOT_FONT_SIZE) 
+        annot_font = ImageFont.truetype(FONT_NAME, ANNOT_FONT_SIZE) 
         annot_width = draw.textbbox((0,0), label, align='center', font=annot_font)[2]
         annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
 
         red_annot_font_size = ANNOT_FONT_SIZE
-        while annot_width*1.1 > WELL_DIAMETER:
-            red_annot_font_size = red_annot_font_size * 0.9
-            annot_font = ImageFont.truetype("arial.ttf", red_annot_font_size) 
+        while annot_width > WELL_DIAMETER:
+            red_annot_font_size = red_annot_font_size * 0.7
+            annot_font = ImageFont.truetype(FONT_NAME, red_annot_font_size) 
             annot_width = draw.textbbox((0,0), label, align='center', font=annot_font)[2]
             annot_height = draw.textbbox((0,0), label, align='center', font=annot_font)[3]
 
@@ -166,7 +169,7 @@ def draw_annotations(draw:ImageDraw.ImageDraw, annots:dict) -> None:
                 font=annot_font)
 
 def draw_title(draw:ImageDraw.ImageDraw, text:str) -> None:
-    title_font = ImageFont.truetype("arial.ttf", TITLE_FONT_SIZE)
+    title_font = ImageFont.truetype(FONT_NAME, TITLE_FONT_SIZE)
     draw.text((X_START,
             title_font.getmetrics()[0]*0.5),
             text,
@@ -174,8 +177,8 @@ def draw_title(draw:ImageDraw.ImageDraw, text:str) -> None:
             font=title_font)
 
 def draw_subtitle(draw:ImageDraw.ImageDraw, text:str) -> None:
-    title_font = ImageFont.truetype("arial.ttf", TITLE_FONT_SIZE)
-    subtitle_font = ImageFont.truetype("arial.ttf", TITLE_FONT_SIZE * 0.5)
+    title_font = ImageFont.truetype(FONT_NAME, TITLE_FONT_SIZE)
+    subtitle_font = ImageFont.truetype(FONT_NAME, TITLE_FONT_SIZE * 0.5)
 
     draw.text((X_START + subtitle_font.getmetrics()[1]*1,
             title_font.getmetrics()[0]*1.8),
@@ -184,8 +187,8 @@ def draw_subtitle(draw:ImageDraw.ImageDraw, text:str) -> None:
             font=subtitle_font)
 
 def draw_date(draw:ImageDraw.ImageDraw, text:str = None) -> None:
-    title_font = ImageFont.truetype("arial.ttf", TITLE_FONT_SIZE)
-    date_font = ImageFont.truetype("arial.ttf", TITLE_FONT_SIZE * 0.5)
+    title_font = ImageFont.truetype(FONT_NAME, TITLE_FONT_SIZE)
+    date_font = ImageFont.truetype(FONT_NAME, TITLE_FONT_SIZE * 0.5)
     date = text if text else datetime.now().strftime("%Y.%m.%d")
     draw.text((IMG_SIZE[0] - X_START - WELL_PADDING,
               title_font.getmetrics()[0]*1),
